@@ -1,0 +1,26 @@
+@tailwind base;
+html {
+  scroll-behavior: smooth;
+}
+@tailwind components;
+@tailwind utilities;
+
+@font-face{
+  font-family: "tahoma";
+  src: url("../public/fonts/Tahoma.ttf")
+}
+
+@font-face{
+  font-family: "inter";
+  src: url("../public/fonts/inter.ttf")
+}
+
+@font-face{
+  font-family: "montserrat";
+  src: url("../public/fonts/Montserrat.ttf")
+}
+
+@font-face{
+  font-family: "drglitch";
+  src: url("../public/fonts/drGlitch.otf")
+}
