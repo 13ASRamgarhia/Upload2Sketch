@@ -6,7 +6,6 @@ import loginContext from "../Context/loginContext";
 
 const Navbar = () => {
   const location = useLocation()
-  const { isLoggedIn } = useContext(loginContext)
   
   const toggleHamburger = () => {
     document.getElementById("slideoverBG").classList.toggle("invisible");
