@@ -3,7 +3,7 @@ import axios from "axios";
 
 const Main = () => {
   const [image, setImage] = useState(null);
-  const [sketch, setSketch] = useState(null);
+  const [sketch] = useState(null);
   const [loading, setLoading] = useState(false);
   const [imageFileName, setImageFileName] = useState("");
 
