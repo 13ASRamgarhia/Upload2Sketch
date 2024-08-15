@@ -1,8 +1,8 @@
-import React, { useContext } from "react";
+import React from "react";
 import logo from "../Assets/logo.png"
 import { Link, useLocation } from "react-router-dom";
 import { Icon } from "semantic-ui-react";
-import loginContext from "../Context/loginContext";
+//import loginContext from "../Context/loginContext";
 
 const Navbar = () => {
   const location = useLocation()

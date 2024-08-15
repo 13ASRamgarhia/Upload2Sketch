@@ -1,100 +1,106 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const Main = () => {
-  const [image, setImage] = useState(null);
-  const [sketch] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [imageFileName, setImageFileName] = useState("");
+  const [imageUrl, setImageUrl] = useState(null); // State for the uploaded image URL
+  const [sketchUrl, setSketchUrl] = useState(""); // State for the generated sketch URL
+  const [loading, setLoading] = useState(false); // State for loading status
+  const [imageFileName, setImageFileName] = useState(""); // State for the image file name
 
+  // Handle image file upload
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     setImageFileName(file.name);
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImage(reader.result);
-    };
-    reader.readAsDataURL(file);
+
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setImageUrl(url);
+      console.log("Image URL:", url);
+      console.log(imageFileName)
+    }
   };
 
+  // Convert the image to a sketch using an external API
   const handleSketchConversion = async () => {
-    if (!image) return;
-    const imageURL = "https://raw.githubusercontent.com/vaibhavsharma2511/Testing/master/Jatin_pic.jpg"
+    if (!imageUrl) return;
 
     setLoading(true);
-    console.log("1")
+
     try {
-      console.log("2")
-      const response = await axios.get(`https://sketch-x6qw.onrender.com/create_sketch/?image_url=${encodeURIComponent(imageURL)}`);
-      console.log("3")
-      if (response.status === 200) {
-        console.log("4")
-        console.log(response)
-      } else {
-        console.log("5")
-        console.error("Failed to create sketch", response.data);
-      }
+      const response = await axios.post(
+        `https://sketch-x6qw.onrender.com/create_sketch_basic/`,
+        {
+          responseType: "blob",
+        }
+      );
+
+      const blob = response.data;
+      const url = URL.createObjectURL(blob);
+      setSketchUrl(url);
     } catch (error) {
-      console.log("6")
       console.error("Error creating sketch", error);
+      setSketchUrl("");
     } finally {
-      console.log("7")
       setLoading(false);
     }
-    console.log("8")
   };
 
-  const downloadImage = (url, filename) => {
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = filename;
-    link.click();
-  };
+  // // Download the image
+  // const downloadImage = (url, filename) => {
+  //   if (!url) return;
+  //   const link = document.createElement("a");
+  //   link.href = url;
+  //   link.download = filename;
+  //   link.click();
+  // };
+
+  useEffect(() => {
+    return () => {
+      if (sketchUrl) {
+        URL.revokeObjectURL(sketchUrl);
+      }
+    };
+  }, [sketchUrl]);
 
   return (
-    <div className="flex flex-col h-screen">
-      <nav className="bg-headerBG py-4">
-        <div className="container mx-auto px-4">
-          <h1 className="text-2xl font-bold text-white">Upload2Sketch</h1>
-        </div>
-      </nav>
-      <main className="flex-grow flex flex-col justify-center items-center">
-        <div className="text-center">
-          <h2 className="text-4xl font-bold mb-4">Convert Your Image to a Sketch</h2>
+    <div className="flex flex-col h-screen py-14 laptop:px-20">
+      <div className="pt-5 text-4xl font-bold tracking-wide">
+        Convert your Image to a Sketch
+      </div>
+      <div className="flex items-center justify-center bg-green-400">
+        <div className="pt-2">
           <input type="file" accept="image/*" onChange={handleImageUpload} className="mb-4" />
-          {image && (
-            <button
-              onClick={() => downloadImage(image, imageFileName)}
-              className="bg-gradient-to-r from-logoColor to-headingColor text-xl text-white rounded-lg px-6 py-4 mb-4"
-            >
-              Download Original Image
-            </button>
-          )}
-          <button
-            onClick={handleSketchConversion}
-            className="bg-gradient-to-r from-logoColor to-headingColor text-xl text-white rounded-lg px-6 py-4 mb-4"
-            disabled={loading}
-          >
-            {loading ? "Creating Sketch..." : "Create Sketch"}
-          </button>
-          {sketch && (
-            <div className="mt-6">
-              <img src={sketch} alt="Sketch" className="rounded-lg shadow-lg mb-4" />
-              <button
-                onClick={() => downloadImage(sketch, "sketch.png")}
-                className="bg-gradient-to-r from-logoColor to-headingColor text-xl text-white rounded-lg px-6 py-4"
-              >
-                Download Sketch
-              </button>
-            </div>
-          )}
         </div>
-      </main>
-      <footer className="bg-headerBG py-4 mt-auto">
-        <div className="container mx-auto px-4 text-white text-center">
-          &copy; 2024 Upload2Sketch. All rights reserved.
+      </div>
+      <div className="flex flex-col laptop:flex-row bg-red-500 py-5">
+        <div className="flex flex-col bg-blue-100 laptop:w-1/2 justify-center items-center">
+          <div className="border border-black my-2">
+            <img
+              src={imageUrl || "https://via.placeholder.com/400x600"}
+              alt="Uploaded Preview"
+              className="object-cover"
+              style={{ width: '400px', height: '600px' }}
+            />
+          </div>
         </div>
-      </footer>
+        <div className="flex flex-col bg-blue-100 laptop:w-1/2 justify-center items-center">
+          <div className="border border-black my-2">
+            <img
+              src={sketchUrl || "https://via.placeholder.com/400x600"}
+              alt="Sketch Preview"
+              className="object-cover"
+              style={{ width: '400px', height: '600px' }}
+            />
+          </div>
+        </div>
+      </div>
+      <button
+        onClick={handleSketchConversion}
+        className="bg-gradient-to-r from-logoColor to-headingColor text-xl text-white rounded-lg px-6 py-4 mb-4"
+        disabled={loading}
+      >
+        {loading ? "Creating Sketch..." : "Create Sketch"}
+      </button>
     </div>
   );
 };
