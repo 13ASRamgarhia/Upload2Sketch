@@ -27,7 +27,7 @@ const Member = (props) => {
 };
 
 const About = () => {
-  document.title = "About | CineSense"
+  document.title = "About | Upload2Sketch"
   const team = [
     {
       id: 1,
