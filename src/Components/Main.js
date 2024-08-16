@@ -226,7 +226,6 @@ const Main = () => {
         <div className="pt-2">
           <input type="file" onChange={handleFileChange} />
         </div>
-        <p>{transcript}</p>
       </div>
       <div className="space-x-10 flex justify-center mt-10">
         <button className="px-4 py-2 rounded-xl border-2 border-logoColor" onClick={SpeechRecognition.startListening}>Use Voice Command</button>
